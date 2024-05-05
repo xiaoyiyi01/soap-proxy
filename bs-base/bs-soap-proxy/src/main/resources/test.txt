@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" soap:encodingStyle="http://www.w3.org/2003/05/soap-encoding">
+    <soap:Header>
+    </soap:Header>
+    <soap:Body>
+         <getUserAddress xmlns="http://ws.services.provider.soap.bluesky.com">
+			    <userName>hello</userName>
+        </getUserAddress>
+    </soap:Body>
+</soap:Envelope>
