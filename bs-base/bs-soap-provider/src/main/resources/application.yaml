@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: bs-soap-provider
+  profiles:
+    active: prod
+server:
+  port: 9998

@@ -1,0 +1,6 @@
+server:
+  port: 9997
+
+spring:
+  application:
+    name: soap-proxy
