@@ -12,6 +12,7 @@
     <modules>
         <module>bs-soap-provider</module>
         <module>bs-soap-proxy</module>
+        <module>ndls-approve-service</module>
     </modules>
 
     <dependencyManagement>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:process id="LeaveApplicationProcess" name="leave" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_046asyq</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_046asyq" sourceRef="StartEvent_1" targetRef="Activity_0upmfbl" />
+    <bpmn:userTask id="Activity_0upmfbl" name="填写请假单">
+      <bpmn:incoming>Flow_046asyq</bpmn:incoming>
+      <bpmn:outgoing>Flow_0rypapb</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0rypapb" sourceRef="Activity_0upmfbl" targetRef="Activity_0cc45pk" />
+    <bpmn:userTask id="Activity_0cc45pk" name="人事主管审批">
+      <bpmn:incoming>Flow_0rypapb</bpmn:incoming>
+      <bpmn:outgoing>Flow_11541k5</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Event_1ho0ptt">
+      <bpmn:incoming>Flow_11541k5</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_11541k5" sourceRef="Activity_0cc45pk" targetRef="Event_1ho0ptt" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="LeaveApplicationProcess">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="173" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0i33de8_di" bpmnElement="Activity_0upmfbl">
+        <dc:Bounds x="310" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_10mtq6r_di" bpmnElement="Activity_0cc45pk">
+        <dc:Bounds x="520" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1ho0ptt_di" bpmnElement="Event_1ho0ptt">
+        <dc:Bounds x="762" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_046asyq_di" bpmnElement="Flow_046asyq">
+        <di:waypoint x="209" y="120" />
+        <di:waypoint x="310" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rypapb_di" bpmnElement="Flow_0rypapb">
+        <di:waypoint x="410" y="120" />
+        <di:waypoint x="520" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11541k5_di" bpmnElement="Flow_11541k5">
+        <di:waypoint x="620" y="120" />
+        <di:waypoint x="762" y="120" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
