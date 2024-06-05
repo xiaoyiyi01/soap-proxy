@@ -5,7 +5,9 @@ import com.alibaba.csp.sentinel.SphU;
 import com.alibaba.csp.sentinel.Tracer;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.sun.org.apache.bcel.internal.generic.RETURN;
+import io.vavr.control.Try;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientException;
@@ -49,7 +51,12 @@ public class RestTemplateWrapper {
      */
     public static final String DEFAULT_RESPONSE_ENTITY = "defaultResp";
 
+    private boolean isCircuitBreak = false;
+
+    private String circuitBreakEntryName;
+
     private RestTemplate restTemplate;
+
     private Consumer<Map<String, Object>> recordFunc;
 
     private RestTemplateWrapper(RestTemplate restTemplate) {
@@ -60,25 +67,30 @@ public class RestTemplateWrapper {
         return new RestTemplateWrapper(restTemplate);
     }
 
-    public <T> ResponseEntity<T> circuitBreakPostEntity(String entryName, String url, Object request,
-        Class<T> responseType, Map<String, ?> uriVariables) {
-        // return empty body ResponseEntity by default
-        ResponseEntity<T> defaultResp = new ResponseEntity<>(HttpStatus.OK);
+    public void setCircuitBreakEntryName(String circuitBreakEntryName) {
+        this.circuitBreakEntryName = circuitBreakEntryName;
+    }
+
+    public void setCircuitBreak(boolean isCircuitBreak) {
+        this.isCircuitBreak = isCircuitBreak;
+    }
+
+    private <T> ResponseEntity<T> circuitBreakPostEntity(String url, Object request, Class<T> responseType, Map<String, ?> uriVariables)
+            throws BlockException, RestClientException {
         Entry entry = null;
         try{
-            entry = SphU.entry(entryName);
-            defaultResp = restTemplate.postForEntity(url, request, responseType, uriVariables);
-        } catch (BlockException e) {
-            log.error("request circuit break: ", e);
-        } catch (Throwable e) {
+            entry = SphU.entry(circuitBreakEntryName);
+            log.debug("circuitBreak wrapper has been executed.");
+            return restTemplate.postForEntity(url, request, responseType, uriVariables);
+        } catch (RestClientException e) {
+            // 此处只捕获业务异常进行熔断统计,统计后继续往外抛出异常由上层进行处理
             Tracer.traceEntry(e, entry);
-            log.error("post request {} error", url, e);
+            throw e;
         } finally {
             if (entry != null) {
                 entry.exit();
             }
         }
-        return defaultResp;
     }
 
     public <T> ResponseEntity<T> recordLogPostEntity(T defaultRsp, String url, Object request, Class<T> responseType, Map<String, ?> uriVariables) {
@@ -89,8 +101,12 @@ public class RestTemplateWrapper {
         ResponseEntity<T> defaultResp = new ResponseEntity<>(defaultRsp, HttpStatus.OK);
         long start = System.currentTimeMillis();
         try {
-            defaultResp = restTemplate.postForEntity(url, request, responseType, uriVariables);
-        } catch (RestClientException e) {
+            if (isCircuitBreak) {
+                defaultResp = circuitBreakPostEntity(url, request, responseType, uriVariables);
+            } else {
+                defaultResp = restTemplate.postForEntity(url, request, responseType, uriVariables);
+            }
+        } catch (Throwable e) {
             log.error("post request {} error", url, e);
             additionalInfo.put(RESP_ERR_MSG, e.getMessage());
         } finally {
