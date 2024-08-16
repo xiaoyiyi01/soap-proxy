@@ -1,5 +1,7 @@
 package com.bluesky.soap.provider.services.ws;
 
+import com.bluesky.soap.provider.services.ws.entity.Route;
+
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
@@ -20,6 +22,8 @@ import javax.xml.ws.soap.SOAPBinding;
 public interface UserInfoService {
 
     @WebMethod
-    String getUserAddress(@WebParam(name = "userName", targetNamespace = "http://ws.services.provider.soap.bluesky.com") String userName);
+    String getUserAddress(@WebParam(name = "userName", targetNamespace = "http://ws.services.provider.soap.bluesky.com") String userName,
+                         @WebParam(name = "latency", targetNamespace = "http://ws.services.provider.soap.bluesky.com") int latency,
+                         @WebParam(name = "route", targetNamespace = "http://ws.services.provider.soap.bluesky.com") Route route);
 
 }
